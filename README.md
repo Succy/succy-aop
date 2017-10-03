@@ -33,6 +33,23 @@ public class AspectTest extends AbstractAspectProxy {
     protected void throwable(JoinPoint joinPoint) {
         // 异常通知的实现
     }
+    
+    @Override
+    protected void end() {
+        // 不管是否抛出异常，都会执行的方法，就好像在finally块执行的方法
+    }
+    
+    /**
+     *  是否拦截，默认是对方法进行拦截，如果不希望方法执行的时候被框架拦截，可
+     *  以重写该方法，或者是项目前期已经设定好了切面，后面不想要被拦截，但是又
+     *  不想通过删除切面的方式去解除切面，也可以重写该方法，再者，如果不希望对
+     *  某些方法进行拦截，亦可重写该方法。框架本身也会对目标类父类的方法进行拦
+     *  截的，这点是需要注意的 
+     **/
+    @Override
+    protected boolean isIntercept() {
+        
+    }
 }
 ```
 3. 编写目标类，目标类可以是已存在的类，如果想要对类中所有的方法都进行拦截(都作为切点)，那么可以在类上使用@Aspect()注解，如果想要对某个方法进行拦截，那么可以直接在要拦截的方法上使用@PointCut注解，如下
