@@ -1,8 +1,7 @@
 package cn.succy.aop.test;
 
 import cn.succy.aop.Aop;
-import cn.succy.aop.test.example.TargetA;
-import cn.succy.aop.test.example.TargetB;
+import cn.succy.aop.test.example.DemoService;
 import org.junit.Test;
 
 /**
@@ -11,21 +10,15 @@ import org.junit.Test;
  **/
 
 public class AopTest {
-
     @Test
-    public void testTargetA() {
-        TargetA targetA = Aop.enhance(TargetA.class);
-        targetA.test();
-        System.out.println(targetA);
-    }
+    public void testDemoService() {
+        DemoService service = Aop.enhance(DemoService.class);
+        service.login("succy", "123456");
+        service.buy();
 
-    @Test
-    public void testTargetB() {
-        TargetB targetB = Aop.enhance(TargetB.class);
-        targetB.test();
-        targetB.testB();
-        System.out.println("-------------------");
-        TargetA targetA = Aop.enhance(TargetA.class);
-        targetA.test();
+        service.add();
+        service.logout();
+
+
     }
 }
