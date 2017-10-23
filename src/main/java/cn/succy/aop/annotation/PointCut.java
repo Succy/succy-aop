@@ -1,4 +1,6 @@
-package cn.succy.aop.proxy;
+package cn.succy.aop.annotation;
+
+import cn.succy.aop.proxy.AbstractAspectProxy;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -7,13 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用于标注在目标类上，表明该类所有方法都要被参数中的所有切面拦截
+ * 用于在目标类中，标注方法作为切入点
  * @author Succy
  * @since 1.0.0
  */
 @Inherited
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Aspect {
-    Class<? extends AbstractAspectProxy> value()[];
+public @interface PointCut {
+    Class<? extends AbstractAspectProxy>[] value();
 }

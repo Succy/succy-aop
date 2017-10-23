@@ -1,8 +1,9 @@
 package cn.succy.aop;
 
+import cn.succy.aop.annotation.EnhancedAnnotation;
 import cn.succy.aop.proxy.AbstractAspectProxy;
-import cn.succy.aop.proxy.Aspect;
-import cn.succy.aop.proxy.PointCut;
+import cn.succy.aop.annotation.Aspect;
+import cn.succy.aop.annotation.PointCut;
 import cn.succy.aop.proxy.Proxy;
 import cn.succy.aop.proxy.ProxyManager;
 import cn.succy.aop.util.ReflectionUtil;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,12 +41,13 @@ public class Aop {
             logger.error("get aspect class set failure, because target class is null");
             throw new RuntimeException("get aspect class set failure, because target class is null");
         }
-        // 使用Set进行去重
-        Set<Class<? extends AbstractAspectProxy>> aspectClassSet = new HashSet<Class<? extends AbstractAspectProxy>>();
+        // 使用LinkedHashSet进行去重并保证顺序
+        Set<Class<? extends AbstractAspectProxy>> aspectClassSet = new LinkedHashSet<Class<? extends AbstractAspectProxy>>();
 
         // 获取目标类上的@Aspect注解的值
-        if (targetClass.isAnnotationPresent(Aspect.class)) {
-            Aspect aspectAnnotation = targetClass.getAnnotation(Aspect.class);
+        EnhancedAnnotation target = new EnhancedAnnotation(targetClass);
+        if (target.isAnnotationPresent(Aspect.class)) {
+            Aspect aspectAnnotation = target.getAnnotation(Aspect.class);
             Class<? extends AbstractAspectProxy>[] aspectClassArr = aspectAnnotation.value();
             Collections.addAll(aspectClassSet, aspectClassArr);
         }
@@ -53,8 +55,9 @@ public class Aop {
         // 获取目标类中方法标记有@PointCut注解的值
         Method[] methods = targetClass.getDeclaredMethods();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(PointCut.class)) {
-                PointCut pointCut = method.getAnnotation(PointCut.class);
+            EnhancedAnnotation methodAnnotation = new EnhancedAnnotation(method);
+            if (methodAnnotation.isAnnotationPresent(PointCut.class)) {
+                PointCut pointCut = methodAnnotation.getAnnotation(PointCut.class);
                 Class<? extends AbstractAspectProxy>[] pointCutClassArr = pointCut.value();
                 Collections.addAll(aspectClassSet, pointCutClassArr);
             }

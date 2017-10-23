@@ -1,7 +1,8 @@
 package cn.succy.aop.test.example;
 
-import cn.succy.aop.proxy.Aspect;
-import cn.succy.aop.proxy.PointCut;
+import cn.succy.aop.annotation.Aspect;
+import cn.succy.aop.annotation.PointCut;
+import cn.succy.aop.test.example.annotation.RolesAllow;
 
 /**
  * 模拟一个service，在上面加入切面进行拦截
@@ -9,8 +10,10 @@ import cn.succy.aop.proxy.PointCut;
  * @author Succy
  * @date 2017-10-09 16:32
  **/
-@Aspect(LogAspect.class)
+@Aspect({LogAspect.class, TestAspect.class})
 public class DemoService {
+
+    @RolesAllow({"SuperAdmin", "Admin"})
     public String login(String username, String pwd) {
         System.out.println(username + "用户登录了");
         return String.format("用户%s登录成功，登录密码是%s", username, pwd);

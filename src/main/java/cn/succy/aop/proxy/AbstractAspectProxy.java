@@ -1,5 +1,8 @@
 package cn.succy.aop.proxy;
 
+import cn.succy.aop.annotation.Aspect;
+import cn.succy.aop.annotation.EnhancedAnnotation;
+import cn.succy.aop.annotation.PointCut;
 import cn.succy.aop.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,11 @@ import java.lang.reflect.Method;
 public abstract class AbstractAspectProxy implements Proxy {
     private static final Logger logger = LoggerFactory.getLogger(AbstractAspectProxy.class);
 
+    /**
+     * @param proxyChain 代理链
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object doProxy(ProxyChain proxyChain) throws Throwable {
         Class<?> targetClass = proxyChain.getTargetClass();
@@ -25,29 +33,54 @@ public abstract class AbstractAspectProxy implements Proxy {
         Object target = proxyChain.getTargetObj();
         JoinPoint joinPoint = new JoinPoint(targetClass, targetMethod, params, target, this);
 
-        Object result = null;
-        try {
-            if (isIntercept(joinPoint)) {
-                if ((targetClass.isAnnotationPresent(Aspect.class) && ArrayUtil.contains(targetClass.getAnnotation(Aspect.class).value(), this.getClass()))
-                        || ((targetMethod.isAnnotationPresent(PointCut.class) && ArrayUtil.contains(targetMethod.getAnnotation(PointCut.class).value(), this.getClass())))) {
-                    before(joinPoint);
-                    result = proxyChain.doProxyChain();
-                    after(joinPoint, result);
-                } else {
-                    result = proxyChain.doProxyChain();
-                }
+        // 对目标类对象和目标方法的注解进行增强，以达到使用组合注解的目的
+        EnhancedAnnotation targetClsAnnotated = new EnhancedAnnotation(targetClass);
+        EnhancedAnnotation methodAnnotated = new EnhancedAnnotation(targetMethod);
+
+        Object result;
+        if (isIntercept(joinPoint)) {
+            boolean isInvoke = (targetClsAnnotated.isAnnotationPresent(Aspect.class)
+                    && ArrayUtil.contains(targetClsAnnotated.getAnnotation(Aspect.class).value(), this.getClass()))
+                    || ((methodAnnotated.isAnnotationPresent(PointCut.class)
+                    && ArrayUtil.contains(methodAnnotated.getAnnotation(PointCut.class).value(), this.getClass())));
+            if (isInvoke) {
+                result = around(proxyChain);
             } else {
                 result = proxyChain.doProxyChain();
             }
+        } else {
+            result = proxyChain.doProxyChain();
+        }
 
+        return result;
+    }
+
+    /**
+     * 环绕通知/增强 如果子类中重写了该方法，则重写的before() after()等方法将不起作用。
+     *
+     * @param chain 代理链
+     * @return
+     * @throws Throwable
+     */
+    protected Object around(ProxyChain chain) throws Throwable {
+        Class<?> targetClass = chain.getTargetClass();
+        Method targetMethod = chain.getTargetMethod();
+        Object[] params = chain.getMethodParams();
+        Object target = chain.getTargetObj();
+        JoinPoint joinPoint = new JoinPoint(targetClass, targetMethod, params, target, this);
+
+        Object result = null;
+        try {
+            before(joinPoint);
+            result = chain.doProxyChain();
+            after(joinPoint, result);
         } catch (Exception e) {
-            logger.error("do proxy error", e);
+            logger.error("invoke proxy occur error", e);
             throwable(joinPoint, e);
             throw e;
         } finally {
             end();
         }
-
         return result;
     }
 

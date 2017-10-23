@@ -73,6 +73,8 @@ Target target = Aop.enhance(Target.class);
 // 从而运行切面的通知方法，起到AOP的作用
 target.test();
 ```
+5. 切面的执行顺序：Class级别>Method级别。同一个级别的情况下，配置在前面的先执行。 
+
 具体的测试用例在test包下有，感兴趣的小伙伴们可以到代码中查看
 
 ## 鸣谢

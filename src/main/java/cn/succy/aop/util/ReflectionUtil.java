@@ -3,6 +3,7 @@ package cn.succy.aop.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,5 +40,12 @@ public final class ReflectionUtil {
         }
         return (T) instance;
     }
+
+    //public static boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+    //    if (clazz.isAnnotationPresent(annotation)) {
+    //        return true;
+    //    }
+    //    Annotation[] declaredAnnotations = clazz.getDeclaredAnnotations();
+    //}
 
 }

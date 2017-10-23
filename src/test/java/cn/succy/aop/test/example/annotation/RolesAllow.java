@@ -1,4 +1,7 @@
-package cn.succy.aop.proxy;
+package cn.succy.aop.test.example.annotation;
+
+import cn.succy.aop.annotation.PointCut;
+import cn.succy.aop.test.example.RoleAspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -6,14 +9,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 用于在目标类中，标注方法作为切入点
- * @author Succy
- * @since 1.0.0
- */
 @Inherited
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PointCut {
-    Class<? extends AbstractAspectProxy> value()[];
+@PointCut(RoleAspect.class)
+public @interface RolesAllow {
+   String[] value();
 }

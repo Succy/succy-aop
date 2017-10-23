@@ -6,7 +6,7 @@
 
     <groupId>cn.succy</groupId>
     <artifactId>succy-aop</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/cglib/cglib -->
@@ -38,6 +38,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

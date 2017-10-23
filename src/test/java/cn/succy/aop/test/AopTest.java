@@ -13,11 +13,13 @@ public class AopTest {
     @Test
     public void testDemoService() {
         DemoService service = Aop.enhance(DemoService.class);
-        service.login("succy", "123456");
-        service.buy();
+        String loginInfo = service.login("Marry", "123456");
+        System.out.println(loginInfo);
 
-        service.add();
-        service.logout();
+        //service.buy();
+        //
+        //service.add();
+        //service.logout();
 
 
     }
