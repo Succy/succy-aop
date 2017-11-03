@@ -56,8 +56,8 @@
                 <version>2.4</version>
                 <configuration>
                     <excludes>
-                        <include>logback.xml</include>
-                        <include>mq-config.properties</include>
+                        <exclude>logback.xml</exclude>
+                        <exclude>mq-config.properties</exclude>
                     </excludes>
                 </configuration>
             </plugin>
